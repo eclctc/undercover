@@ -96,13 +96,13 @@ Builds three pages with React Router, styled to `docs/BRAND.md` (Instrument Sans
 
 Money shows as $1,250.00. Types come from one `api.ts`, with no `any`.
 
-- [ ] Vitest tests with a stubbed `fetch` cover each page, the status labels, live steps and sign-off; coverage at or above 80%
-- [ ] `npm run check:ts` passes
-- [ ] In the browser (Playwright MCP), the queue shows 25 claims marked Waiting
-- [ ] In the browser, CLM-1001 shows its story, items, documents and policy
-- [ ] In the browser, after a live agent run on a claim, its page shows the steps, the decision and the reasons
-- [ ] In the browser, the Instructions page shows the same text as `backend/agent_instructions.md`
-- [ ] Screenshots in light and dark mode match the brand
+- [x] Vitest tests with a stubbed `fetch` cover each page, the status labels, live steps and sign-off; coverage at or above 80%
+- [x] `npm run check:ts` passes
+- [x] In the browser (Playwright MCP), the queue shows all 25 claims with their status (24 Waiting and CLM-1001 Decided, after the live run)
+- [x] In the browser, CLM-1001 shows its story, items, documents and policy
+- [x] In the browser, after a live agent run on a claim, its page shows the steps, the decision and the reasons
+- [x] In the browser, the Instructions page shows the same text as `backend/agent_instructions.md`
+- [x] Screenshots in light and dark mode match the brand
 
 ## Phase 6: End-to-end tests and handover
 

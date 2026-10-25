@@ -63,6 +63,8 @@ def test_run_records_steps_in_order(client):
     assert kinds == ["tool_call", "tool_result"] * 6 + ["message"]
     assert steps[0]["detail"] == 'get_claim {"claim_id": "CLM-1001"}'
     assert steps[1]["detail"].startswith("get_claim: ")
+    assert steps[1]["detail"].endswith("...")
+    assert len(steps[1]["detail"]) == len("get_claim: ") + main.STEP_DETAIL_LENGTH + 3
 
 
 def test_agent_reaches_only_the_backend_api():

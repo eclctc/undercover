@@ -16,7 +16,7 @@ load_dotenv(override=True)
 
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 DEFAULT_MODEL = "openai/gpt-6-luna"
-STEP_DETAIL_LENGTH = 500
+STEP_DETAIL_LENGTH = 200
 
 
 def model() -> ChatOpenAI:
@@ -33,7 +33,10 @@ def model() -> ChatOpenAI:
 def steps_from(message: BaseMessage) -> list[dict[str, str]]:
     """Describe what one message from the agent did, as steps for the dashboard."""
     if isinstance(message, ToolMessage):
-        detail = f"{message.name}: {message.text[:STEP_DETAIL_LENGTH]}"
+        text = message.text
+        if len(text) > STEP_DETAIL_LENGTH:
+            text = text[:STEP_DETAIL_LENGTH] + "..."
+        detail = f"{message.name}: {text}"
         return [{"kind": "tool_result", "detail": detail}]
     steps = []
     if isinstance(message, AIMessage) and message.text:
