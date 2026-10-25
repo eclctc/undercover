@@ -1,20 +1,18 @@
 """The UnderCover backend."""
 
 import json
-import sqlite3
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Any
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import FastAPI
 
-from backend import db, seed
+from backend import db, seed, workflow
+from backend.records import Conn, claim_record, fetch
 
 INSTRUCTIONS_PATH = Path("backend/agent_instructions.md")
 POLICY_WORDING_PATH = Path("data/policy_wording.md")
-
-Conn = Annotated[sqlite3.Connection, Depends(db.session)]
 
 
 @asynccontextmanager
@@ -25,37 +23,7 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
 
 
 app = FastAPI(title="UnderCover", lifespan=lifespan)
-
-
-def fetch(conn: sqlite3.Connection, table: str, key: str, value: str) -> sqlite3.Row:
-    """Return one row by its key, or raise 404 if there is none."""
-    row = conn.execute(
-        f"SELECT * FROM {table} WHERE {key} = ?",  # noqa: S608
-        (value,),
-    ).fetchone()
-    if row is None:
-        raise HTTPException(404, f"No {key} {value}")
-    return row
-
-
-def claim_record(conn: sqlite3.Connection, claim_id: str) -> dict[str, Any]:
-    """Return a claim with its status, decision and payment."""
-    row = fetch(conn, "claims", "claim_id", claim_id)
-    decision = conn.execute(
-        "SELECT decision, payout, reasons, policy_section, decided_at"
-        " FROM decisions WHERE claim_id = ?",
-        (claim_id,),
-    ).fetchone()
-    payment = conn.execute(
-        "SELECT amount, signed_off_by, paid_at FROM payments WHERE claim_id = ?",
-        (claim_id,),
-    ).fetchone()
-    return {
-        **json.loads(row["data"]),
-        "status": row["status"],
-        "decision": dict(decision) if decision else None,
-        "payment": dict(payment) if payment else None,
-    }
+app.include_router(workflow.router)
 
 
 @app.get("/api/health", operation_id="health")

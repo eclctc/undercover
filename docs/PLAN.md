@@ -68,11 +68,11 @@ Adds `start_claim`, `record_step`, `list_steps`, `record_decision`, `pay_claim` 
 - `pay_claim` returns 409 unless the claim is approved, the amount equals the approved payout, it has not been paid, and the payout is $1,000 or less or has been signed off.
 - `sign_off_claim` works only on `awaiting_sign_off`, records the handler, pays the payout and sets `decided`.
 
-- [ ] Tests cover every rule above, each with its 409 case
-- [ ] A test approves $1,250.00, calls `pay_claim` for $1,250.00 and gets 409 with a message that a handler's sign-off is needed; after `sign_off_claim` the claim shows paid
-- [ ] A test approves $420.00, pays it, and a second payment returns 409
-- [ ] Steps come back from `list_steps` in the order they were recorded
-- [ ] Coverage stays at or above 80% and `npm run check:python` passes
+- [x] Tests cover every rule above, each with its 409 case
+- [x] A test approves $1,250.00, calls `pay_claim` for $1,250.00 and gets 409 with a message that a handler's sign-off is needed; after `sign_off_claim` the claim shows paid
+- [x] A test approves $420.00, pays it, and a second payment returns 409
+- [x] Steps come back from `list_steps` in the order they were recorded
+- [x] Coverage stays at or above 80% and `npm run check:python` passes
 
 ## Phase 4: The UnderCover Agent
 
