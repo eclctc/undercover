@@ -51,13 +51,13 @@ Builds `backend/db.py`: the SQLite schema (claims, policies, customers, plans, a
 
 Adds the read operations: `list_claims`, `get_claim`, `get_policy`, `get_claim_history`, `get_policy_wording`, `get_agent_instructions` and `list_handlers`, plus a first version of `backend/agent_instructions.md`.
 
-- [ ] Tests cover every route, including 404 for an unknown claim, policy or customer
-- [ ] `curl localhost:8000/api/claims` returns 25 claims with id, type, summary, amount claimed and status
-- [ ] `curl localhost:8000/api/claims/CLM-1001` returns the story, items and documents
-- [ ] `curl localhost:8000/api/policies/POL-2001` includes the Premium plan's limits
-- [ ] `curl localhost:8000/api/customers/CUS-3001/claim-history` returns CLM-0412 and no address, phone or date of birth
-- [ ] A test checks every route in `/openapi.json` has an `operation_id`, a summary and no optional parameters
-- [ ] `npm run check:python` passes
+- [x] Tests cover every route, including 404 for an unknown claim, policy or customer
+- [x] `curl localhost:8000/api/claims` returns 25 claims with id, type, summary, amount claimed and status
+- [x] `curl localhost:8000/api/claims/CLM-1001` returns the story, items and documents
+- [x] `curl localhost:8000/api/policies/POL-2001` includes the Premium plan's limits
+- [x] `curl localhost:8000/api/customers/CUS-3001/claim-history` returns CLM-0412 and no address, phone or date of birth
+- [x] A test checks every route in `/openapi.json` has an `operation_id`, a summary and no optional parameters
+- [x] `npm run check:python` passes
 
 ## Phase 3: The decision workflow and the sign-off rule
 
