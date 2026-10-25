@@ -108,12 +108,12 @@ Money shows as $1,250.00. Types come from one `api.ts`, with no `any`.
 
 Adds Playwright tests over the real backend and dashboard. They run against their own fresh database (`UNDERCOVER_DB`) on ports 8001 and 5174, so they never touch the dev data or clash with `npm run dev`. They stand in for the agent by calling the API directly, so they never call a model. Updates `docs/STATUS.md` and `README.md`.
 
-- [ ] An e2e test opens the queue and a claim, and sees its details
-- [ ] An e2e test records an approval of $420.00 and a payment through the API, then sees Decided and Paid on the claim page
-- [ ] An e2e test records an approval of $1,250.00, sees the payment blocked, signs off as a handler in the dashboard, and sees Paid
-- [ ] An e2e test opens the Instructions page
-- [ ] `docs/STATUS.md` says what's built and how to run it: `npm run dev`, `uv run -m agent`, `npm run reset`
-- [ ] `npm run check` passes in full
+- [x] An e2e test opens the queue and a claim, and sees its details
+- [x] An e2e test records an approval of $420.00 and a payment through the API, then sees Decided and Paid on the claim page
+- [x] An e2e test records an approval of $1,250.00, sees the payment blocked, signs off as a handler in the dashboard, and sees Paid
+- [x] An e2e test opens the Instructions page
+- [x] `docs/STATUS.md` says what's built and how to run it: `npm run dev`, `uv run -m agent`, `npm run reset`
+- [x] `npm run check` passes in full
 
 ## Not in the pilot
 
