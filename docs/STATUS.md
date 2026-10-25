@@ -1,10 +1,13 @@
 # Status
 
-A hello-world skeleton with every check in place:
+The pilot is being built from `docs/PLAN.md`.
 
-- `backend/`: one route, `GET /api/health`
-- `agent/`: the entry point `run(claim_id, thread_id)`, with one tool that calls the health route
+- `backend/`: a SQLite database (`backend/undercover.db`) seeded from `data/`, and one route, `GET /api/health`
+- `agent/`: the hello-world entry point `run(claim_id, thread_id)`
 - `dashboard/`: one page that shows whether the backend is up
 - `e2e/`: one test of that page
 
-Nothing of UnderCover is built yet. Update this file as you build.
+## Run it
+
+- `npm run reset` rebuilds the database from `data/`
+- `npm run dev` starts the backend and the dashboard
