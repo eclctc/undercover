@@ -78,13 +78,13 @@ Adds `start_claim`, `record_step`, `list_steps`, `record_decision`, `pay_claim` 
 
 Replaces the hello-world agent. `run(claim_id, thread_id)` fetches the instructions from the API, starts the claim, and runs `create_agent` with tools that wrap the API: `get_claim`, `get_policy`, `get_claim_history`, `get_policy_wording`, `record_decision` and `pay_claim`. A refused payment comes back to the model as the backend's message, so it can carry on. It posts each tool call and result as a step. `uv run -m agent CLM-1001` works one claim; `uv run -m agent` works every waiting claim in the queue. The instructions tell it to read everything, decide from the policy wording alone, work out the payout, explain in two or three sentences with the section, record the decision, then pay.
 
-- [ ] Stub-model tests (no real model) run a claim through `get_claim`, `record_decision` and `pay_claim` against the test backend, and the claim ends `decided` and paid
-- [ ] A stub-model test approves over $1,000 and tries to pay; the backend refuses, the claim ends `awaiting_sign_off` and unpaid
-- [ ] A test shows the steps for a run are recorded in order
-- [ ] A test checks the agent's tools cannot reach `data/evals/` (no tool reads files)
-- [ ] `test_model_name` still passes: `openai/gpt-6-luna` with low reasoning by default, `MODEL_NAME` when set
-- [ ] A live run, `uv run -m agent CLM-1001` with the backend up, records a decision with reasons and a policy section (one claim, a few cents, or free with `MODEL_NAME=openrouter/free`)
-- [ ] `npm run check:python` passes
+- [x] Stub-model tests (no real model) run a claim through `get_claim`, `record_decision` and `pay_claim` against the test backend, and the claim ends `decided` and paid
+- [x] A stub-model test approves over $1,000 and tries to pay; the backend refuses, the claim ends `awaiting_sign_off` and unpaid
+- [x] A test shows the steps for a run are recorded in order
+- [x] A test checks the agent's tools cannot reach `data/evals/` (no tool reads files)
+- [x] `test_model_name` still passes: `openai/gpt-6-luna` with low reasoning by default, `MODEL_NAME` when set
+- [x] A live run, `uv run -m agent CLM-1001` with the backend up, records a decision with reasons and a policy section (one claim, a few cents, or free with `MODEL_NAME=openrouter/free`)
+- [x] `npm run check:python` passes
 
 ## Phase 5: The dashboard
 
