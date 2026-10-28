@@ -5,6 +5,7 @@ import type {
   ClaimSummary,
   Handler,
   Policy,
+  Run,
   Step,
 } from "./api";
 
@@ -30,6 +31,7 @@ export const CLAIM: Claim = {
   documents: [
     { name: "Hotel receipt", type: "receipt", content: "Total paid: $245.00." },
   ],
+  failures: 0,
   decision: null,
   payment: null,
 };
@@ -70,6 +72,20 @@ export const STEP: Step = {
   recorded_at: "2026-10-25T20:07:30+00:00",
 };
 
+export const RUN: Run = {
+  run_id: 1,
+  cap: 5,
+  started_at: "2026-10-28T14:00:00+00:00",
+  finished_at: null,
+  todos: [
+    { content: "Work CLM-1001", status: "done" },
+    { content: "Work CLM-1002", status: "in_progress" },
+    { content: "Work CLM-1003", status: "to_do" },
+    { content: "Work CLM-1004", status: "left_for_handler" },
+  ],
+  summary: null,
+};
+
 export const HANDLERS: Handler[] = [
   {
     handler_id: "HND-01",
@@ -84,7 +100,9 @@ export function stubApi(routes: Record<string, unknown>) {
     const key = init?.method === "POST" ? `POST ${path}` : path;
     const status = key in routes ? 200 : 404;
     return Promise.resolve(
-      new Response(JSON.stringify(routes[key] ?? {}), { status }),
+      new Response(JSON.stringify(key in routes ? routes[key] : {}), {
+        status,
+      }),
     );
   });
   vi.stubGlobal("fetch", fetchStub);

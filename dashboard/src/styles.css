@@ -128,7 +128,7 @@ a {
 
 .counts {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 16px;
   padding: 0;
   list-style: none;
@@ -188,11 +188,13 @@ td a.mono {
   color: var(--midnight);
 }
 
-.status-waiting {
+.status-waiting,
+.todo-to_do {
   background: var(--marigold);
 }
 
-.status-in_progress {
+.status-in_progress,
+.todo-in_progress {
   background: var(--cerulean);
   color: #ffffff;
 }
@@ -202,10 +204,13 @@ td a.mono {
 }
 
 .status-decided,
+.todo-done,
 .decision-approve {
   background: var(--sea-green);
 }
 
+.status-needs_handler,
+.todo-left_for_handler,
 .decision-decline {
   background: var(--raspberry);
   color: #ffffff;
@@ -226,6 +231,15 @@ td a.mono {
 
 .kind-message {
   background: var(--sea-green);
+}
+
+.kind-read {
+  background: var(--marigold);
+}
+
+.kind-error {
+  background: var(--raspberry);
+  color: #ffffff;
 }
 
 .payout {
@@ -295,6 +309,29 @@ dd {
 }
 
 .instructions {
+  white-space: pre-wrap;
+}
+
+.todos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.todos li {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.todos .badge {
+  justify-self: start;
+}
+
+.summary {
   white-space: pre-wrap;
 }
 

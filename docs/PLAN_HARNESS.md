@@ -99,12 +99,12 @@ Writes `backend/instructions/queue.md`: list the waiting claims, write the to-do
 
 Types come from `api.ts`, with no `any`. Adds e2e tests that stand in for the agent through the API.
 
-- [ ] Vitest tests: the run panel with each to-do status and the summary; no panel before the first run; the new status; the read panel; both instruction sections. Coverage at or above 80%
-- [ ] E2E: start a run and record a to-do list through the API, then see it on the queue page; update an item to done and see it ticked off
-- [ ] E2E: fail a claim twice through the API and see "Left for a handler" on the queue and the claim page
-- [ ] E2E: the Instructions page shows both sections
-- [ ] `npm run check` passes
-- [ ] Screenshots of the queue with a run, in light and dark mode, match the brand
+- [x] Vitest tests: the run panel with each to-do status and the summary; no panel before the first run; the new status; the read panel; both instruction sections. Coverage at or above 80%
+- [x] E2E: start a run and record a to-do list through the API, then see it on the queue page; update an item to done and see it ticked off
+- [x] E2E: fail a claim twice through the API and see "Left for a handler" on the queue and the claim page
+- [x] E2E: the Instructions page shows both sections
+- [x] `npm run check` passes
+- [x] Screenshots of the queue with a run, in light and dark mode, match the brand
 
 ## Phase 6: The live run and handover
 

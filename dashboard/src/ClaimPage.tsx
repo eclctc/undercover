@@ -89,6 +89,30 @@ function HistoryPanel({ history }: Readonly<{ history: ClaimHistory }>) {
   );
 }
 
+function ReadPanel({ steps }: Readonly<{ steps: Step[] }>) {
+  const reads = steps.filter((step) => step.kind === "read");
+  return (
+    <section className="panel" aria-label="What the agent read">
+      <h2>What the agent read</h2>
+      {reads.length === 0 ? (
+        <p className="muted">Nothing yet.</p>
+      ) : (
+        <ul>
+          {reads.map((step) => (
+            <li key={step.step_id}>{step.detail}</li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+function failuresNote(failures: number): string {
+  if (failures === 0) return "";
+  if (failures === 1) return " The agent failed on it once.";
+  return ` The agent failed on it ${String(failures)} times.`;
+}
+
 function ClaimView({ claimId }: Readonly<{ claimId: string }>) {
   const claimApi = useApi<Claim>(`/api/claims/${claimId}`, LIVE_POLL_MS);
   const claim = claimApi.data;
@@ -116,6 +140,7 @@ function ClaimView({ claimId }: Readonly<{ claimId: string }>) {
       <p className="lead">
         {claim.summary}. Claimed{" "}
         <span className="mono">{money(claim.amount_claimed)}</span>.
+        {failuresNote(claim.failures)}
       </p>
       <div className="columns">
         <div>
@@ -124,6 +149,7 @@ function ClaimView({ claimId }: Readonly<{ claimId: string }>) {
           <StepsPanel steps={steps ?? []} />
         </div>
         <div>
+          <ReadPanel steps={steps ?? []} />
           {policy && <PolicyPanel policy={policy} />}
           {history && <HistoryPanel history={history} />}
         </div>
