@@ -61,15 +61,15 @@ Adds a `runs` table and a `failures` column on claims, with `start_run`, `record
 
 Reworks `agent/` around the claim agent. `work_claim(claim_id)` starts the claim, runs a fresh `create_agent` with the claim instructions, and returns a one-line report. Its tools: `get_claim`, `get_policy`, `get_claim_history`, `get_document_contents`, `get_document_section`, `record_decision` and `pay_claim`. Its middleware: `ModelRetryMiddleware` and `ToolRetryMiddleware` (backoff on timeouts and provider errors) and `ModelCallLimitMiddleware` (a claim agent that loops ends). A claim that raises, or ends without a decision, is sent to `fail_claim` with the reason, and the report says so. A claim that isn't waiting is refused with the backend's message and not counted as a failure. The default model becomes DeepSeek V4.1 Flash. Removes `get_policy_wording`. Writes `backend/instructions/claim.md` from the wording and the manual: work in the manual's order (section 4), look up the sections needed, and the rules for each decision.
 
-- [ ] Stub-model test: a claim is worked through the contents, two section reads, `record_decision` and `pay_claim`; the claim ends `decided` and paid, and the report is `CLM-1001: approve, $420.00, paid`
-- [ ] Stub-model test: each section read is recorded as a `read` step naming the document and section, in order with the other steps
-- [ ] Stub-model test: a model that raises leaves the claim `waiting` with one failure and an `error` step, and the report says it went back in the queue
-- [ ] Stub-model test: a model that stops without a decision counts as a failure in the same way
-- [ ] Stub-model test: a second failure leaves the claim `needs_handler`, and the report says so
-- [ ] Stub-model test: the over-$1,000 approval still ends `awaiting_sign_off` and unpaid
-- [ ] `test_model_name`: `deepseek/deepseek-v4.1-flash` with low reasoning by default, `MODEL_NAME` when set
-- [ ] A test checks the tools reach only the backend's API (no tool reads files)
-- [ ] `npm run check:python` passes
+- [x] Stub-model test: a claim is worked through the contents, two section reads, `record_decision` and `pay_claim`; the claim ends `decided` and paid, and the report is `CLM-1001: approve, $420.00, paid`
+- [x] Stub-model test: each section read is recorded as a `read` step naming the document and section, in order with the other steps
+- [x] Stub-model test: a model that raises leaves the claim `waiting` with one failure and an `error` step, and the report says it went back in the queue
+- [x] Stub-model test: a model that stops without a decision counts as a failure in the same way
+- [x] Stub-model test: a second failure leaves the claim `needs_handler`, and the report says so
+- [x] Stub-model test: the over-$1,000 approval still ends `awaiting_sign_off` and unpaid
+- [x] `test_model_name`: `deepseek/deepseek-v4.1-flash` with low reasoning by default, `MODEL_NAME` when set
+- [x] A test checks the tools reach only the backend's API (no tool reads files)
+- [x] `npm run check:python` passes
 
 ## Phase 4: The queue agent
 

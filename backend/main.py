@@ -12,7 +12,6 @@ from backend import db, documents, runs, seed, workflow
 from backend.records import Conn, claim_record, fetch
 
 INSTRUCTIONS_DIR = Path("backend/instructions")
-POLICY_WORDING_PATH = Path("data/policy_wording.md")
 
 
 @asynccontextmanager
@@ -70,12 +69,6 @@ def get_claim_history(customer_id: str, conn: Conn) -> dict[str, Any]:
     customer = json.loads(fetch(conn, "customers", "customer_id", customer_id)["data"])
     fields = ["customer_id", "name", "customer_since", "previous_claims"]
     return {field: customer[field] for field in fields}
-
-
-@app.get("/api/policy-wording", operation_id="get_policy_wording")
-def get_policy_wording() -> dict[str, str]:
-    """Get the policy wording, the contract with the customer."""
-    return {"text": POLICY_WORDING_PATH.read_text(encoding="utf-8")}
 
 
 @app.get("/api/agent-instructions", operation_id="get_agent_instructions")
