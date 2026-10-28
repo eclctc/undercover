@@ -8,10 +8,10 @@ from typing import Any
 
 from fastapi import FastAPI
 
-from backend import db, seed, workflow
+from backend import db, documents, seed, workflow
 from backend.records import Conn, claim_record, fetch
 
-INSTRUCTIONS_PATH = Path("backend/agent_instructions.md")
+INSTRUCTIONS_DIR = Path("backend/instructions")
 POLICY_WORDING_PATH = Path("data/policy_wording.md")
 
 
@@ -24,6 +24,7 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
 
 app = FastAPI(title="UnderCover", lifespan=lifespan)
 app.include_router(workflow.router)
+app.include_router(documents.router)
 
 
 @app.get("/api/health", operation_id="health")
@@ -78,8 +79,11 @@ def get_policy_wording() -> dict[str, str]:
 
 @app.get("/api/agent-instructions", operation_id="get_agent_instructions")
 def get_agent_instructions() -> dict[str, str]:
-    """Get the UnderCover Agent's instructions."""
-    return {"text": INSTRUCTIONS_PATH.read_text(encoding="utf-8")}
+    """Get the agent's instructions for running the queue and for working a claim."""
+    return {
+        name: (INSTRUCTIONS_DIR / f"{name}.md").read_text(encoding="utf-8")
+        for name in ["queue", "claim"]
+    }
 
 
 @app.get("/api/handlers", operation_id="list_handlers")

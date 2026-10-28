@@ -56,7 +56,7 @@ def record_step(claim_id: str, step: dict[str, str]) -> None:
 
 def run(claim_id: str, thread_id: str, llm: BaseChatModel | None = None) -> str:
     """Work one waiting claim, recording each step, and return the final reply."""
-    instructions = call("GET", "/api/agent-instructions")["text"]
+    instructions = call("GET", "/api/agent-instructions")["claim"]
     call("POST", f"/api/claims/{claim_id}/start")
     agent = create_agent(llm or model(), tools=TOOLS, system_prompt=instructions)
     reply = ""

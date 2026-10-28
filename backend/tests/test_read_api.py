@@ -52,8 +52,10 @@ def test_get_policy_wording(client):
 
 
 def test_get_agent_instructions(client):
-    text = client.get("/api/agent-instructions").json()["text"]
-    assert "UnderCover Agent" in text
+    instructions = client.get("/api/agent-instructions").json()
+    assert instructions.keys() == {"queue", "claim"}
+    assert "running the queue" in instructions["queue"]
+    assert "UnderCover Agent" in instructions["claim"]
 
 
 def test_list_handlers(client):
