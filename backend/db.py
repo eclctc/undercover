@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS claims (
     policy_id TEXT NOT NULL,
     customer_id TEXT NOT NULL,
     status TEXT NOT NULL,
+    failures INTEGER NOT NULL DEFAULT 0,
     data TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS policies (policy_id TEXT PRIMARY KEY, data TEXT NOT NULL);
@@ -40,6 +41,14 @@ CREATE TABLE IF NOT EXISTS steps (
     kind TEXT NOT NULL,
     detail TEXT NOT NULL,
     recorded_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS runs (
+    run_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    cap INTEGER NOT NULL,
+    started_at TEXT NOT NULL,
+    finished_at TEXT,
+    todos TEXT NOT NULL,
+    summary TEXT
 );
 """
 

@@ -8,7 +8,7 @@ from typing import Any
 
 from fastapi import FastAPI
 
-from backend import db, documents, seed, workflow
+from backend import db, documents, runs, seed, workflow
 from backend.records import Conn, claim_record, fetch
 
 INSTRUCTIONS_DIR = Path("backend/instructions")
@@ -25,6 +25,7 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
 app = FastAPI(title="UnderCover", lifespan=lifespan)
 app.include_router(workflow.router)
 app.include_router(documents.router)
+app.include_router(runs.router)
 
 
 @app.get("/api/health", operation_id="health")

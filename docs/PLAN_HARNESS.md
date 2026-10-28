@@ -48,14 +48,14 @@ Adds `backend/documents.py`, which splits the wording and the manual into number
 
 Adds a `runs` table and a `failures` column on claims, with `start_run`, `record_todos`, `finish_run`, `get_latest_run` and `fail_claim`, and the `needs_handler` status.
 
-- [ ] Tests: `start_run` creates a run with its cap; `record_todos` replaces the list; `finish_run` saves the summary and the finish time; `get_latest_run` returns the newest run, or `null` before any
-- [ ] Tests: a to-do item with an unknown status is rejected (422)
-- [ ] Tests: `fail_claim` on an `in_progress` claim records an `error` step and sets `waiting`; a second failure on the same claim sets `needs_handler`
-- [ ] Tests: `fail_claim` on a claim that is `waiting`, `decided` or `awaiting_sign_off` returns 409, so a decided claim can never go back in the queue
-- [ ] Tests: `start_run` fails a claim left `in_progress` by an earlier run, which then shows `waiting` with one failure
-- [ ] Tests: a claim that failed once and then is started and decided has exactly one decision, and a second `pay_claim` is still refused
-- [ ] Reseeding sets every claim's failures to 0
-- [ ] `npm run check:python` passes
+- [x] Tests: `start_run` creates a run with its cap; `record_todos` replaces the list; `finish_run` saves the summary and the finish time; `get_latest_run` returns the newest run, or `null` before any
+- [x] Tests: a to-do item with an unknown status is rejected (422)
+- [x] Tests: `fail_claim` on an `in_progress` claim records an `error` step and sets `waiting`; a second failure on the same claim sets `needs_handler`
+- [x] Tests: `fail_claim` on a claim that is `waiting`, `decided` or `awaiting_sign_off` returns 409, so a decided claim can never go back in the queue
+- [x] Tests: `start_run` fails a claim left `in_progress` by an earlier run, which then shows `waiting` with one failure
+- [x] Tests: a claim that failed once and then is started and decided has exactly one decision, and a second `pay_claim` is still refused
+- [x] Reseeding sets every claim's failures to 0
+- [x] `npm run check:python` passes
 
 ## Phase 3: The claim agent
 
