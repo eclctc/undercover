@@ -1,6 +1,8 @@
+import pytest
 from langchain_core.messages import AIMessage
 
 from agent import __main__ as cli
+from agent import queue_agent
 from agent.queue_agent import work_queue
 from agent.tests.stubs import FailingModel, decline, stub, tool_call
 
@@ -135,3 +137,13 @@ def test_cli_runs_the_queue_with_a_cap(monkeypatch):
     cli.main(["--cap", "5"])
     cli.main([])
     assert caps == [5, 25]
+
+
+def test_a_missing_key_fails_before_a_run_is_recorded(client, monkeypatch):
+    def no_key():
+        raise KeyError("OPENROUTER_API_KEY")
+
+    monkeypatch.setattr(queue_agent, "model", no_key)
+    with pytest.raises(KeyError):
+        work_queue(5)
+    assert client.get("/api/runs/latest").json() is None

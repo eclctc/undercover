@@ -113,10 +113,11 @@ def work_queue(
     cap: int, llm: BaseChatModel | None = None, claim_model: ClaimModel | None = None
 ) -> str:
     """Work up to cap waiting claims, printing each report, and return the summary."""
+    llm = llm or model()
     run_id = call("POST", "/api/runs", {"cap": cap})["run_id"]
     run = QueueRun(run_id, cap, claim_model or (lambda _claim_id: model()))
     agent = create_agent(
-        llm or model(),
+        llm,
         tools=queue_tools(run),
         system_prompt=call("GET", "/api/agent-instructions")["queue"],
         middleware=[*retry_middleware(), MissedClaimsCheck(run)],
