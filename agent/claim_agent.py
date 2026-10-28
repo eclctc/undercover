@@ -5,22 +5,16 @@ import uuid
 from typing import Any
 
 from langchain.agents import create_agent
-from langchain.agents.middleware import (
-    AgentMiddleware,
-    ModelCallLimitMiddleware,
-    ModelRetryMiddleware,
-    ToolRetryMiddleware,
-)
+from langchain.agents.middleware import AgentMiddleware, ModelCallLimitMiddleware
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, BaseMessage, ToolMessage
 
+from agent.harness import messages_in, retry_middleware
 from agent.model import model
 from agent.tools import CLAIM_TOOLS, call, call_for_model
 
-MESSAGE_NODES = ("model", "tools")
 STEP_DETAIL_LENGTH = 200
 MODEL_CALL_LIMIT = 30
-RETRY_INITIAL_DELAY_SECONDS = 2.0
 NO_DECISION = "The agent stopped without recording a decision"
 DOCUMENT_NAMES = {"policy_wording": "Policy wording", "claims_manual": "Claims manual"}
 
@@ -66,21 +60,8 @@ def record_step(claim_id: str, step: dict[str, str]) -> None:
 def middleware() -> list[AgentMiddleware[Any, Any]]:
     """Retry the model and the tools after a passing failure, and cap model calls."""
     return [
-        ModelRetryMiddleware(
-            initial_delay=RETRY_INITIAL_DELAY_SECONDS, on_failure="error"
-        ),
-        ToolRetryMiddleware(initial_delay=RETRY_INITIAL_DELAY_SECONDS),
+        *retry_middleware(),
         ModelCallLimitMiddleware(run_limit=MODEL_CALL_LIMIT, exit_behavior="end"),
-    ]
-
-
-def messages_in(update: dict[str, Any]) -> list[BaseMessage]:
-    """Return the new messages in one streamed update, skipping middleware nodes."""
-    return [
-        message
-        for name, node in update.items()
-        if name in MESSAGE_NODES
-        for message in node["messages"]
     ]
 
 

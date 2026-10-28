@@ -81,15 +81,15 @@ Adds the queue agent: one `work_queue(cap)` entry point that calls `start_run`, 
 
 Writes `backend/instructions/queue.md`: list the waiting claims, write the to-do list, choose the order, keep the list up to date, retry a claim that went back in the queue, and finish with a short summary for the handlers.
 
-- [ ] Stub-model test: a run writes a to-do list, works two claims, ticks them off and finishes; `get_latest_run` returns the list with both `done` and the summary
-- [ ] Stub-model test: a run capped at 2 on a queue of 25 works two claims; the third `work_claim` is refused and 23 claims stay `waiting`
-- [ ] Stub-model test: one claim's model raises and the run goes on to decide the next claim
-- [ ] Stub-model test: a failed claim goes back in the queue, the queue agent works it again, and it ends decided, with one decision
-- [ ] Stub-model test: a claim that fails twice ends `needs_handler` and the run finishes
-- [ ] Stub-model test: the queue agent tries to finish with a claim still waiting within its cap; the hook sends it back, and it works that claim before finishing
-- [ ] Stub-model test: the hook does not send it back once the cap is reached
-- [ ] `uv run -m agent --help` shows the cap and the claim id
-- [ ] `npm run check:python` passes
+- [x] Stub-model test: a run writes a to-do list, works two claims, ticks them off and finishes; `get_latest_run` returns the list with both `done` and the summary
+- [x] Stub-model test: a run capped at 2 on a queue of 25 works two claims; the third `work_claim` is refused and 23 claims stay `waiting`
+- [x] Stub-model test: one claim's model raises and the run goes on to decide the next claim
+- [x] Stub-model test: a failed claim goes back in the queue, the queue agent works it again, and it ends decided, with one decision
+- [x] Stub-model test: a claim that fails twice ends `needs_handler` and the run finishes
+- [x] Stub-model test: the queue agent tries to finish with a claim still waiting within its cap; the hook sends it back, and it works that claim before finishing
+- [x] Stub-model test: the hook does not send it back once the cap is reached
+- [x] `uv run -m agent --help` shows the cap and the claim id
+- [x] `npm run check:python` passes
 
 ## Phase 5: The dashboard
 

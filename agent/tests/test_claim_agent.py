@@ -1,39 +1,9 @@
-import pytest
-from langchain_core.language_models.fake_chat_models import GenericFakeChatModel
 from langchain_core.messages import AIMessage
 
-from agent import __main__ as cli
 from agent import claim_agent, model, tools
+from agent.tests.stubs import FailingModel, StubModel, decline, tool_call
 
 CLAIM = "/api/claims/CLM-1001"
-
-
-class StubModel(GenericFakeChatModel):
-    """A chat model that gives scripted replies in place of a real model."""
-
-    def bind_tools(self, tools, **kwargs):
-        return self
-
-
-class FailingModel(StubModel):
-    """A chat model whose provider fails the first `failures` calls."""
-
-    failures: int = 1_000
-
-    def _generate(self, *args, **kwargs):
-        if self.failures:
-            self.failures -= 1
-            raise TimeoutError("The model provider timed out")
-        return super()._generate(*args, **kwargs)
-
-
-@pytest.fixture(autouse=True)
-def no_retry_delay(monkeypatch):
-    monkeypatch.setattr(claim_agent, "RETRY_INITIAL_DELAY_SECONDS", 0)
-
-
-def tool_call(name, **args):
-    return AIMessage(content="", tool_calls=[{"name": name, "args": args, "id": name}])
 
 
 def decide(payout):
@@ -172,18 +142,6 @@ def test_unknown_claim_comes_back_as_a_refusal():
     assert tools.get_claim.invoke({"claim_id": "CLM-9999"}).startswith("Refused (404)")
 
 
-def test_cli_works_the_waiting_claims(monkeypatch, capsys):
-    worked = []
-    monkeypatch.setattr(
-        cli, "work_claim", lambda claim_id: worked.append(claim_id) or f"{claim_id}: ok"
-    )
-    cli.main([])
-    assert len(worked) == 25
-    cli.main(["CLM-1001"])
-    assert worked[-1] == "CLM-1001"
-    assert "CLM-1001: ok" in capsys.readouterr().out
-
-
 def test_model_name(monkeypatch):
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
     monkeypatch.delenv("MODEL_NAME", raising=False)
@@ -195,12 +153,4 @@ def test_model_name(monkeypatch):
 
 
 def test_a_decline_is_reported_without_a_payment(client):
-    decline = tool_call(
-        "record_decision",
-        claim_id="CLM-1001",
-        decision="decline",
-        payout=0,
-        reasons="Not a covered reason.",
-        policy_section="Section 9, General exclusions",
-    )
-    assert work([decline, AIMessage(content="Declined.")]) == "CLM-1001: decline, $0.00"
+    assert work(decline("CLM-1001")) == "CLM-1001: decline, $0.00"
