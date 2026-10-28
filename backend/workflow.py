@@ -12,6 +12,7 @@ from backend import seed
 from backend.records import Conn, claim_record, fetch
 
 PAYOUT_APPROVAL_LIMIT: float = seed.load("company.json")["payout_approval_limit"]
+FAILURES_BEFORE_HANDLER = 2
 
 router = APIRouter(prefix="/api/claims/{claim_id}")
 
@@ -37,6 +38,12 @@ class Decision(BaseModel):
         if self.decision != "approve" and self.payout != 0:
             raise ValueError("Only an approval has a payout")
         return self
+
+
+class Failure(BaseModel):
+    """Why the agent could not finish a claim."""
+
+    reason: str
 
 
 class Payment(BaseModel):
@@ -79,6 +86,27 @@ def record_payment(
     )
 
 
+def insert_step(
+    conn: sqlite3.Connection, claim_id: str, kind: str, detail: str
+) -> None:
+    """Add a step to a claim's record."""
+    conn.execute(
+        "INSERT INTO steps (claim_id, kind, detail, recorded_at) VALUES (?, ?, ?, ?)",
+        (claim_id, kind, detail, now()),
+    )
+
+
+def fail(conn: sqlite3.Connection, claim_id: str, reason: str) -> None:
+    """Put a failed claim back in the queue, or leave it for a handler on a repeat."""
+    insert_step(conn, claim_id, "error", reason)
+    conn.execute(
+        "UPDATE claims SET failures = failures + 1 WHERE claim_id = ?", (claim_id,)
+    )
+    failures = fetch(conn, "claims", "claim_id", claim_id)["failures"]
+    retry = failures < FAILURES_BEFORE_HANDLER
+    set_status(conn, claim_id, "waiting" if retry else "needs_handler")
+
+
 def payment_refusal(claim: dict[str, Any], amount: float) -> str | None:
     """Return why a payment may not be made, or None if it may."""
     decision = claim["decision"]
@@ -109,10 +137,7 @@ def start_claim(claim_id: str, conn: Conn) -> dict[str, Any]:
 def record_step(claim_id: str, step: Step, conn: Conn) -> dict[str, str]:
     """Record one step the agent took on a claim."""
     fetch(conn, "claims", "claim_id", claim_id)
-    conn.execute(
-        "INSERT INTO steps (claim_id, kind, detail, recorded_at) VALUES (?, ?, ?, ?)",
-        (claim_id, step.kind, step.detail, now()),
-    )
+    insert_step(conn, claim_id, step.kind, step.detail)
     conn.commit()
     return {"status": "recorded"}
 
@@ -127,6 +152,15 @@ def list_steps(claim_id: str, conn: Conn) -> list[dict[str, Any]]:
         (claim_id,),
     )
     return [dict(row) for row in rows]
+
+
+@router.post("/fail", operation_id="fail_claim")
+def fail_claim(claim_id: str, failure: Failure, conn: Conn) -> dict[str, Any]:
+    """Record that work on an undecided claim failed, and retry or refer it."""
+    require_status(conn, claim_id, "in_progress")
+    fail(conn, claim_id, failure.reason)
+    conn.commit()
+    return claim_record(conn, claim_id)
 
 
 @router.post("/decision", operation_id="record_decision")

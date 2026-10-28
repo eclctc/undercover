@@ -1,23 +1,32 @@
-"""Work claims from the command line: `uv run -m agent [claim_id ...]`."""
+"""Work the queue, or one claim, from the command line: `uv run -m agent`."""
 
+import argparse
 import sys
-import uuid
 
-from agent.main import run
+from agent.claim_agent import work_claim
+from agent.queue_agent import work_queue
 from agent.tools import call
 
 
-def waiting_claims() -> list[str]:
-    """Return the ids of every claim waiting in the queue."""
-    return [
-        c["claim_id"] for c in call("GET", "/api/claims") if c["status"] == "waiting"
-    ]
+def parse(args: list[str]) -> argparse.Namespace:
+    """Read the claim id or the cap from the command line."""
+    parser = argparse.ArgumentParser(
+        prog="uv run -m agent",
+        description="Work every waiting claim, at most a cap of them, or one claim.",
+    )
+    parser.add_argument("claim_id", nargs="?", help="work only this claim")
+    parser.add_argument("--cap", type=int, help="work at most this many claims")
+    return parser.parse_args(args)
 
 
-def main(claim_ids: list[str]) -> None:
-    """Work the given claims, or every waiting claim if none are given."""
-    for claim_id in claim_ids or waiting_claims():
-        print(f"{claim_id}: {run(claim_id, uuid.uuid4().hex)}")
+def main(args: list[str]) -> None:
+    """Work one named claim, or run the queue agent over the waiting claims."""
+    options = parse(args)
+    if options.claim_id:
+        print(work_claim(options.claim_id))
+        return
+    cap = options.cap or len(call("GET", "/api/claims"))
+    print(work_queue(cap))
 
 
 if __name__ == "__main__":

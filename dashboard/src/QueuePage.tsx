@@ -1,6 +1,7 @@
 import { Link } from "react-router";
-import type { ClaimSummary, Status } from "./api";
+import type { ClaimSummary, Run, Status } from "./api";
 import { day, money, STATUS_LABELS, words } from "./format";
+import { RunPanel } from "./RunPanel";
 import { StatusBadge } from "./StatusBadge";
 import { useApi } from "./useApi";
 
@@ -12,6 +13,7 @@ export function QueuePage() {
     "/api/claims",
     POLL_MS,
   );
+  const { data: run } = useApi<Run | null>("/api/runs/latest", POLL_MS);
   if (failed) return <p role="alert">The backend is not responding.</p>;
   if (!claims) return <p>Loading the queue</p>;
 
@@ -28,6 +30,7 @@ export function QueuePage() {
           </li>
         ))}
       </ul>
+      {run && <RunPanel run={run} />}
       <div className="panel">
         <table>
           <thead>

@@ -8,11 +8,10 @@ from typing import Any
 
 from fastapi import FastAPI
 
-from backend import db, seed, workflow
+from backend import db, documents, runs, seed, workflow
 from backend.records import Conn, claim_record, fetch
 
-INSTRUCTIONS_PATH = Path("backend/agent_instructions.md")
-POLICY_WORDING_PATH = Path("data/policy_wording.md")
+INSTRUCTIONS_DIR = Path("backend/instructions")
 
 
 @asynccontextmanager
@@ -24,6 +23,8 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
 
 app = FastAPI(title="UnderCover", lifespan=lifespan)
 app.include_router(workflow.router)
+app.include_router(documents.router)
+app.include_router(runs.router)
 
 
 @app.get("/api/health", operation_id="health")
@@ -70,16 +71,13 @@ def get_claim_history(customer_id: str, conn: Conn) -> dict[str, Any]:
     return {field: customer[field] for field in fields}
 
 
-@app.get("/api/policy-wording", operation_id="get_policy_wording")
-def get_policy_wording() -> dict[str, str]:
-    """Get the policy wording, the contract with the customer."""
-    return {"text": POLICY_WORDING_PATH.read_text(encoding="utf-8")}
-
-
 @app.get("/api/agent-instructions", operation_id="get_agent_instructions")
 def get_agent_instructions() -> dict[str, str]:
-    """Get the UnderCover Agent's instructions."""
-    return {"text": INSTRUCTIONS_PATH.read_text(encoding="utf-8")}
+    """Get the agent's instructions for running the queue and for working a claim."""
+    return {
+        name: (INSTRUCTIONS_DIR / f"{name}.md").read_text(encoding="utf-8")
+        for name in ["queue", "claim"]
+    }
 
 
 @app.get("/api/handlers", operation_id="list_handlers")

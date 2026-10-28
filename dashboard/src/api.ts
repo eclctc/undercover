@@ -1,5 +1,5 @@
 export type Status =
-  "waiting" | "in_progress" | "awaiting_sign_off" | "decided";
+  "waiting" | "in_progress" | "awaiting_sign_off" | "decided" | "needs_handler";
 
 export interface ClaimSummary {
   claim_id: string;
@@ -44,6 +44,7 @@ export interface Claim extends ClaimSummary {
   story: string;
   items: Item[];
   documents: ClaimDocument[];
+  failures: number;
   decision: Decision | null;
   payment: Payment | null;
 }
@@ -89,7 +90,7 @@ export interface ClaimHistory {
 
 export interface Step {
   step_id: number;
-  kind: "tool_call" | "tool_result" | "message";
+  kind: "tool_call" | "tool_result" | "message" | "read" | "error";
   detail: string;
   recorded_at: string;
 }
@@ -100,8 +101,23 @@ export interface Handler {
   role: string;
 }
 
-export interface Text {
-  text: string;
+export interface Instructions {
+  queue: string;
+  claim: string;
+}
+
+export interface Todo {
+  content: string;
+  status: "to_do" | "in_progress" | "done" | "left_for_handler";
+}
+
+export interface Run {
+  run_id: number;
+  cap: number;
+  started_at: string;
+  finished_at: string | null;
+  todos: Todo[];
+  summary: string | null;
 }
 
 export async function getJson<T>(path: string): Promise<T> {

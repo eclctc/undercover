@@ -1,4 +1,4 @@
-"""The agent's tools, each a call to the UnderCover backend's API."""
+"""The claim agent's tools, each a call to the UnderCover backend's API."""
 
 import json
 from typing import Any, Literal
@@ -50,10 +50,19 @@ def get_claim_history(customer_id: str) -> str:
     return call_for_model("GET", f"/api/customers/{customer_id}/claim-history")
 
 
+Document = Literal["policy_wording", "claims_manual"]
+
+
 @tool
-def get_policy_wording() -> str:
-    """Get the policy wording, the contract that decisions follow."""
-    return call("GET", "/api/policy-wording")["text"]
+def get_document_contents(document: Document) -> str:
+    """List the numbered sections of the policy wording or the claims manual."""
+    return call_for_model("GET", f"/api/documents/{document}")
+
+
+@tool
+def get_document_section(document: Document, section: str) -> str:
+    """Read one section of the policy wording or the claims manual, by its number."""
+    return call_for_model("GET", f"/api/documents/{document}/sections/{section}")
 
 
 @tool
@@ -82,11 +91,12 @@ def pay_claim(claim_id: str, amount: float) -> str:
     )
 
 
-TOOLS = [
+CLAIM_TOOLS = [
     get_claim,
     get_policy,
     get_claim_history,
-    get_policy_wording,
+    get_document_contents,
+    get_document_section,
     record_decision,
     pay_claim,
 ]

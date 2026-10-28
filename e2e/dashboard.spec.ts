@@ -74,12 +74,64 @@ test("a payout over the limit waits for a handler's sign-off", async ({
   await expect(page.getByText("after sign-off by HND-01")).toBeVisible();
 });
 
-test("the instructions page shows the agent's instructions", async ({
+test("the instructions page shows both sets of instructions", async ({
   page,
 }) => {
   await page.goto("/");
   await page.getByRole("link", { name: "Instructions" }).click();
   await expect(
-    page.getByText("You are the UnderCover Agent.", { exact: false }),
+    page
+      .getByRole("region", { name: "Running the queue" })
+      .getByText("You work the queue of waiting claims", { exact: false }),
   ).toBeVisible();
+  await expect(
+    page
+      .getByRole("region", { name: "Working a claim" })
+      .getByText("You decide one travel insurance claim", { exact: false }),
+  ).toBeVisible();
+});
+
+test("the queue shows the agent's to-do list being ticked off", async ({
+  page,
+  request,
+}) => {
+  const run = await request.post(`${BACKEND_URL}/api/runs`, {
+    data: { cap: 5 },
+  });
+  const runId = String(((await run.json()) as { run_id: number }).run_id);
+  const recordTodos = (status: string) =>
+    request.put(`${BACKEND_URL}/api/runs/${runId}/todos`, {
+      data: { todos: [{ content: "Work CLM-1004", status }] },
+    });
+  await recordTodos("to_do");
+  await page.goto("/");
+  const todos = page.getByRole("list", { name: "To-do list" });
+  await expect(todos.getByRole("listitem")).toHaveText("To doWork CLM-1004");
+  await recordTodos("done");
+  await page.reload();
+  await expect(todos.getByRole("listitem")).toHaveText("DoneWork CLM-1004");
+});
+
+test("a claim that fails twice is left for a handler", async ({
+  page,
+  request,
+}) => {
+  const claim = `${BACKEND_URL}/api/claims/CLM-1005`;
+  const failOnce = async () => {
+    await request.post(`${claim}/start`);
+    await request.post(`${claim}/fail`, {
+      data: { reason: "TimeoutError: The model provider timed out" },
+    });
+  };
+  await failOnce();
+  await failOnce();
+  await page.goto("/");
+  await expect(
+    page.getByRole("row", { name: /CLM-1005/ }).getByText("Left for a handler"),
+  ).toBeVisible();
+  await page.getByRole("link", { name: "CLM-1005" }).click();
+  await expect(
+    page.getByText("The agent failed on it 2 times.", { exact: false }),
+  ).toBeVisible();
+  await expect(page.getByText("Problem")).toHaveCount(2);
 });

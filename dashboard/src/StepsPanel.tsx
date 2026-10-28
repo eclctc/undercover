@@ -5,6 +5,8 @@ const KIND_LABELS: Record<Step["kind"], string> = {
   tool_call: "Called",
   tool_result: "Result",
   message: "Said",
+  read: "Read",
+  error: "Problem",
 };
 
 export function StepsPanel({ steps }: Readonly<{ steps: Step[] }>) {

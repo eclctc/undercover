@@ -46,14 +46,11 @@ def test_get_claim_history_leaves_out_contact_details(client):
     assert not {"address", "phone", "email", "date_of_birth"} & history.keys()
 
 
-def test_get_policy_wording(client):
-    text = client.get("/api/policy-wording").json()["text"]
-    assert text.startswith("# UnderCover Travel Insurance: Policy Wording")
-
-
 def test_get_agent_instructions(client):
-    text = client.get("/api/agent-instructions").json()["text"]
-    assert "UnderCover Agent" in text
+    instructions = client.get("/api/agent-instructions").json()
+    assert instructions.keys() == {"queue", "claim"}
+    assert "running the queue" in instructions["queue"]
+    assert "UnderCover Agent" in instructions["claim"]
 
 
 def test_list_handlers(client):

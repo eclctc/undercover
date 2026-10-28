@@ -37,6 +37,7 @@ def claim_record(conn: sqlite3.Connection, claim_id: str) -> dict[str, Any]:
     return {
         **json.loads(row["data"]),
         "status": row["status"],
+        "failures": row["failures"],
         "decision": dict(decision) if decision else None,
         "payment": dict(payment) if payment else None,
     }
