@@ -110,12 +110,12 @@ Types come from `api.ts`, with no `any`. Adds e2e tests that stand in for the ag
 
 Reseeds, starts the dev servers and runs `uv run -m agent --cap 5` on the default model, then checks the dashboard in the browser with the Playwright MCP server. Updates `docs/TECH_STACK.md` (the model and the two agents) and `docs/STATUS.md` (what's built and how to run it). Refines the instructions if the run shows a gap, using only the wording and the manual.
 
-- [ ] `npm run reset` then `uv run -m agent --cap 5` works five claims on its own and prints a summary
-- [ ] In the browser, the queue page shows the to-do list filling in and being ticked off during the run, and the summary after it
-- [ ] In the browser, each of the five claims shows its steps, including the sections read, and a decision; 20 claims stay `waiting`
-- [ ] No claim is left `in_progress` after the run
-- [ ] `docs/SPEC.md`, `docs/TECH_STACK.md` and `docs/STATUS.md` describe the product as it now is
-- [ ] `npm run check` passes in full
+- [x] `npm run reset` then `uv run -m agent --cap 5` works five claims on its own and prints a summary
+- [x] In the browser, the queue page shows the to-do list filling in and being ticked off during the run, and the summary after it
+- [x] In the browser, each of the five claims shows its steps, including the sections read, and a decision; 20 claims stay `waiting`
+- [x] No claim is left `in_progress` after the run
+- [x] `docs/SPEC.md`, `docs/TECH_STACK.md` and `docs/STATUS.md` describe the product as it now is
+- [x] `npm run check` passes in full
 
 ## Not in this build
 

@@ -19,7 +19,7 @@ Use `get_document_contents` to see a document's numbered sections, and `get_docu
 4. Look up the contents of both documents. Read the manual's section on working a claim, then the wording's section for the benefit the claim falls under, its exclusions and the general exclusions.
 5. Read the manual's sections that apply. You will almost always need its sections on the three decisions, on documents, and on working out the payout. Check its interpretation notes for anything about the claim that does not fit the wording neatly, its section on repeat claims against the claim history, and its sections on meals and on stories and documents that disagree where they apply.
 6. Decide: approve, decline or refer.
-7. Record the decision with `record_decision`.
+7. Record the decision with `record_decision`. It is final and cannot be changed, so send your full reasons and the policy section in that one call, never a placeholder.
 8. If you approved a payout above $0, pay it with `pay_claim`, for exactly the approved payout.
 
 Check the facts against the documents, not only the story. Check the dates against the covered trip and the purchase date. Amounts are in US dollars.
